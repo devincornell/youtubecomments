@@ -7,6 +7,7 @@ import httplib2
 import os
 import sys
 import pandas as pd
+import warnings
 
 from apiclient.discovery import build_from_document
 from apiclient.errors import HttpError
@@ -175,7 +176,11 @@ if __name__ == "__main__":
 	
 		#with pd.ExcelWriter(fname, engine='xlsxwriter', {'strings_to_urls':False}) as writer:
 		#	df.to_excel(writer)
-		df.to_excel(fname)
+		
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			df.to_excel(fname)
+		
 		print('=================')
 		print('retrieved', i, 'comments;', max(df.index)+1, 'in total; saved to file.')
 		print('=================')
