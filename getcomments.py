@@ -20,7 +20,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
 
 # the OAuth 2.0 information for this application, including its client_id and
@@ -128,6 +127,8 @@ if __name__ == "__main__":
 # The "videoid" option specifies the YouTube video ID that uniquely
 # identifies the video for which the comment will be inserted.
 
+	cfolder = 'comments/'
+
 	argparser.add_argument("--videoid",
 		help="Required; ID for video for which the comment will be inserted.")
 
@@ -138,7 +139,7 @@ if __name__ == "__main__":
 	youtube = get_authenticated_service2()
 	# All the available methods are used in sequence just for the sake of an example.
 
-	fname = 'comments_'+args.videoid+'.xlsx'
+	fname = cfolder + 'comments_'+args.videoid+'.xlsx'
 	if os.path.isfile(fname):
 		df = pd.read_excel(fname)
 		ind = max(df.index)
@@ -171,10 +172,13 @@ if __name__ == "__main__":
 			results = get_comment_threads(youtube, args.videoid, results['nextPageToken'])
 		except:
 			break
-		print('retrieved', i, 'comments;', max(df.index)+1, 'in total.')
 	
+		#with pd.ExcelWriter(fname, engine='xlsxwriter', {'strings_to_urls':False}) as writer:
+		#	df.to_excel(writer)
 		df.to_excel(fname)
-		
+		print('=================')
+		print('retrieved', i, 'comments;', max(df.index)+1, 'in total; saved to file.')
+		print('=================')
 		
 	#print('parent ids!======================')
 	#parent_id = video_comment_threads[0]["id"]
