@@ -146,11 +146,12 @@ if __name__ == "__main__":
 		ind = max(df.index)
 		nptoken = df.loc[ind,'nextpagetoken']
 		results = get_comment_threads(youtube, args.videoid, nptoken)
+		i = max(df.index)+1
 	else:
 		df = pd.DataFrame(columns=['videoid','commentid','authname','authurl','text','publishdat','updatedat','numlikes', 'nextpagetoken'])
 		results = get_comment_threads(youtube, args.videoid)
-	
-	i = 0
+		i = 0
+	j = 0
 	while True:
 		#print(results['nextPageToken'])
 		for item in results["items"]:
@@ -177,12 +178,15 @@ if __name__ == "__main__":
 		#with pd.ExcelWriter(fname, engine='xlsxwriter', {'strings_to_urls':False}) as writer:
 		#	df.to_excel(writer)
 		
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore")
-			df.to_excel(fname)
+		if j % 10 == 0:
+			with warnings.catch_warnings():
+				warnings.simplefilter("ignore")
+				df.to_excel(fname)
+			print('saved to file.')
+		j += 1
 		
 		print('=================')
-		print('retrieved', i, 'comments;', max(df.index)+1, 'in total; saved to file.')
+		print('retrieved', max(df.index)+1, 'comments in total.')
 		print('=================')
 		
 	#print('parent ids!======================')

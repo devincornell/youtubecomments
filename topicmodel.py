@@ -5,7 +5,7 @@ import sys
 import semanticanalysis as sa
 import pandas as pd
 
-outdir = 'topicmodels/'
+outdir = 'topicmodels_65k/'
 
 df = pd.read_excel('comments/comments65k_3tmd-ClpJxA.xlsx')
 ids = [str(c) for c in list(df['commentid'])]
@@ -15,7 +15,7 @@ bows = sa.tokenize_bow(texts)
 
 cbows = sa.removewords(bows)
 
-for Nt in range(5, 150):
+for Nt in range(10, 150, 10):
 	
 	# perform topic mdoel
 	tm = sa.nmf(cbows, Nt, verbose=True)
