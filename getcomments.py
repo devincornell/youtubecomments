@@ -192,21 +192,8 @@ if __name__ == "__main__":
         exit("Please specify videoid using the --videoid= parameter.")
 
     youtube = get_authenticated_service2()
-    # All the available methods are used in sequence just for the sake of an example.
-
-    #fname = cfolder + 'comments_'+args.videoid+'.xlsx'
     
-    
-    #if os.path.isfile(fname):
-    #    df = pd.read_excel(fname)
-    #    ind = max(df.index)
-    #    nptoken = df.loc[ind,'nextpagetoken']
-    #    results = get_comment_threads(youtube, args.videoid, nptoken)
-    #    i = max(df.index)+1
-    #else:
-        #df = pd.DataFrame(columns=['videoid','commentid','authname','authurl','text','publishdat','updatedat','numlikes', 'nextpagetoken'])
-    #    results = get_comment_threads(youtube, args.videoid)
-    
+    # storage databse object
     commdb = Articles('comments/comments.db')
     
     nptoken = None
@@ -223,27 +210,17 @@ if __name__ == "__main__":
         #print(results['nextPageToken'])
         for item in results["items"]:
             #addorder = 'type,commentid,videoid,authname,authurl,content,publishdat,updatedat,numlikes,nextpagetoken',
+            
             # https://developers.google.com/youtube/v3/docs/commentThreads#resource
             tlcomment = item["snippet"]["topLevelComment"]
             commdb.add(parsecomment(tlcomment,results['nextPageToken'],typ='commentThread'))
             
+            # https://developers.google.com/youtube/v3/docs/comments#resource
             cresults = get_comments(youtube, tlcomment['id'])
             for item in cresults["items"]:
                 commdb.add(parsecomment(item,'',typ='comment'))
 
-            #cdata = dict()
-            #comment = item["snippet"]["topLevelComment"]
-            #cdata['commentid'] = comment['id']
-            #cdata['videoid'] = comment["snippet"]['videoId']
-            #cdata['authname'] = comment["snippet"]["authorDisplayName"]
-            #cdata['authurl'] = comment["snippet"]["authorChannelUrl"]
-            #cdata['text'] = comment["snippet"]["textDisplay"]
-            #cdata['publishdat'] = comment["snippet"]["publishedAt"]
-            #cdata['updatedat'] = comment["snippet"]["updatedAt"]
-            #cdata['numlikes'] = comment["snippet"]["likeCount"]
-            #cdata['nextpagetoken'] = results['nextPageToken']
-            
-            #df = df.append( pd.DataFrame([cdata,], index=[i,]) )
+
             if j % 10 == 0:
                 print('=================')
                 print('retreived {} comment threads.'.format(j))
